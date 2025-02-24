@@ -1,4 +1,4 @@
-import cv2  # OpenCV for camera functionality
+import cv2  
 import io
 import os
 import time
@@ -6,31 +6,31 @@ import threading
 import openai
 import pyttsx3
 import customtkinter as ctk
-import textwrap  # For manual text wrapping
+import textwrap  
 from google.cloud import vision
 from PIL import Image, ImageTk
 
-# Set API Keys
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "vision_api_key.json"  # Ensure this file exists
-openai.api_key = "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"  # Replace with your OpenAI API key
 
-# Initialize Google Vision API client
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "vision_api_key.json"  
+openai.api_key = "OPENAPIKEY"  
+
+
 client = vision.ImageAnnotatorClient()
 
-# Initialize Text-to-Speech engine
+
 tts_engine = pyttsx3.init()
 tts_engine.setProperty("rate", 150)
 tts_engine.setProperty("volume", 1)
 
-# Global variables
+
 detected_objects = []
 detected_texts = []
 capturing = False
-clicked_questions = set()  # Track clicked questions
-current_speech_thread = None  # Track the current speech thread
-stop_speech_flag = threading.Event()  # Flag to signal stopping
+clicked_questions = set()  
+current_speech_thread = None  
+stop_speech_flag = threading.Event()  
 
-# Initialize CustomTkinter
+
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
@@ -39,7 +39,7 @@ root = ctk.CTk()
 root.title("AI Learning Interface")
 root.geometry("1100x650")
 
-# Main Layout - Split into three frames
+
 left_frame = ctk.CTkFrame(root, width=250, height=650, corner_radius=10)
 left_frame.pack(side="left", fill="y", padx=10, pady=10)
 
@@ -49,11 +49,11 @@ middle_frame.pack(side="left", padx=10, pady=10, expand=True, fill="both")
 right_frame = ctk.CTkFrame(root, width=250, height=650, corner_radius=10)
 right_frame.pack(side="right", fill="y", padx=10, pady=10)
 
-# Title Label
+
 title_label = ctk.CTkLabel(middle_frame, text="📚 AI Learning Interface", font=("Arial", 20, "bold"))
 title_label.pack(pady=10)
 
-# Left Frame - Detected Objects Section
+
 objects_section_frame = ctk.CTkFrame(left_frame, corner_radius=10, fg_color="#2B2B2B")
 objects_section_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -63,7 +63,7 @@ objects_label.pack(pady=5)
 objects_frame = ctk.CTkScrollableFrame(objects_section_frame, width=220, height=200, corner_radius=5)
 objects_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
-# Left Frame - OCR Text Section
+
 ocr_section_frame = ctk.CTkFrame(left_frame, corner_radius=10, fg_color="#2B2B2B")
 ocr_section_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -73,28 +73,28 @@ ocr_label.pack(pady=5)
 ocr_frame = ctk.CTkScrollableFrame(ocr_section_frame, width=220, height=150, corner_radius=5)
 ocr_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
-# Camera Control Buttons
+
 camera_button = ctk.CTkButton(left_frame, text="📷 Start Camera", command=lambda: start_camera())
 camera_button.pack(pady=5)
 
 capture_button = ctk.CTkButton(left_frame, text="🛑 Take Photo", command=lambda: stop_camera())
 capture_button.pack(pady=5)
 
-# Video Feed Label
+
 video_label = ctk.CTkLabel(middle_frame, text="🎥 Live Video Feed", font=("Arial", 14, "bold"))
 video_label.pack()
 
 video_feed = ctk.CTkLabel(middle_frame, text="(Camera Feed Here)")
 video_feed.pack(pady=10)
 
-# Right Frame - AI Chat & Questions
+
 conversation_text = ctk.CTkTextbox(right_frame, width=220, height=300, wrap="word")
 conversation_text.pack(pady=10, padx=5)
 
 entry = ctk.CTkEntry(right_frame, width=200, placeholder_text="Ask AI here...")
 entry.pack(pady=5)
 
-# Frame for Send and Stop buttons
+
 button_frame = ctk.CTkFrame(right_frame, fg_color="transparent")
 button_frame.pack(pady=5)
 
@@ -104,7 +104,7 @@ send_button.pack(side="left", padx=2)
 stop_button = ctk.CTkButton(button_frame, text="Stop", command=lambda: stop_speech(), fg_color="red")
 stop_button.pack(side="left", padx=2)
 
-# Progress Bar Section
+
 progress_label = ctk.CTkLabel(right_frame, text="📈 Learning Progress:", font=("Arial", 12, "bold"))
 progress_label.pack(pady=5)
 
@@ -113,11 +113,11 @@ progress_bar = ctk.CTkProgressBar(right_frame, variable=progress_var, width=180)
 progress_bar.set(0)
 progress_bar.pack(pady=5)
 
-# Scrollable Follow-Up Questions
+
 button_scroll_frame = ctk.CTkScrollableFrame(right_frame, width=240, height=200, corner_radius=5)
 button_scroll_frame.pack(pady=5, padx=5, fill="both", expand=True)
 
-# Exit Button
+
 exit_button = ctk.CTkButton(right_frame, text="Exit", command=root.quit, fg_color="red")
 exit_button.pack(pady=5)
 
@@ -152,8 +152,8 @@ def speak_in_chunks(text):
 def stop_speech():
     """Stop the current speech and OpenAI response."""
     global current_speech_thread
-    stop_speech_flag.set()  # Signal the speech thread to stop
-    tts_engine.stop()  # Stop the text-to-speech engine immediately
+    stop_speech_flag.set()  
+    tts_engine.stop()  
     if current_speech_thread and current_speech_thread.is_alive():
         print("Stopping current speech thread")
     conversation_text.insert("end", "\n[Speech stopped]\n")
@@ -222,7 +222,7 @@ def handle_input(user_input=None):
         response = ask_openai(user_input)
         conversation_text.insert("end", "ChatGPT: ")
         conversation_text.see("end")
-        stop_speech_flag.clear()  # Reset stop flag before starting new speech
+        stop_speech_flag.clear()  
         current_speech_thread = threading.Thread(target=speak_in_chunks, args=(response,), daemon=True)
         current_speech_thread.start()
 
