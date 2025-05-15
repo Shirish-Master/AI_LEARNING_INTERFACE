@@ -32,6 +32,50 @@ An interactive desktop application that combines computer vision, speech synthes
 
 ### 1. Clone the repository
 
-```bash
+```
 git clone https://github.com/yourusername/ai-learning-interface.git
 cd ai-learning-interface
+```
+
+### 2. Set up a virtual environment (optional but recommended)
+
+```
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```
+pip install -r requirements.txt
+```
+
+### 4. Configure API keys
+
+-Place your Google Cloud Vision API JSON key file as vision_api_key.json in the project root.
+
+-Replace "OPENAPIKEY" in the code with your actual OpenAI API key or set it as an environment variable.
+
+## 🚀 Usage
+
+Run the application with:
+
+```
+python main.py
+```
+
+## Usage
+
+- Click **Start Camera** to begin live object and text detection.
+- Detected objects and texts appear as clickable buttons on the left.
+- Clicking these buttons generates follow-up questions.
+- Type your own questions or select generated ones to interact with the AI.
+- Use **Send** to submit queries and **Stop** to halt speech output.
+- The progress bar tracks your learning progress based on question interactions.
+
+## 📝 Notes
+
+- Requires a working webcam for live detection.
+- Ensure you have an active internet connection for OpenAI and Google Vision API calls.
+- The speech engine uses your system’s default voice.
+
